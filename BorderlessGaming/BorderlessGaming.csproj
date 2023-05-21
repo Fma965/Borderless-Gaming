@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>BorderlessGaming</RootNamespace>
     <AssemblyName>BorderlessGaming</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <PublishUrl>publish\</PublishUrl>
@@ -26,6 +26,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>x86</PlatformTarget>
@@ -238,9 +239,8 @@
       $(PostBuildEventDependsOn);
       PostBuildMacros;
     </PostBuildEventDependsOn>
-    <PostBuildEvent>call signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /as /sha1 3BD5BE571287FE2052F137C44198AE7BAB38B037 "$(ProjectDir)$(OutDir)$(TargetFileName)"
-call iscc /Qp "$(SolutionDir)\Installers\BorderlessGaming_Standalone_Admin.iss"
-call signtool sign /tr http://timestamp.digicert.com /td sha256 /fd sha256 /as /sha1 3BD5BE571287FE2052F137C44198AE7BAB38B037 "$(SolutionDir)Installers\BorderlessGaming@(VersionNumber)_admin_setup.exe"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>copy $(SolutionDir)SteamLibs\* $(ProjectDir)$(OutDir)</PreBuildEvent>

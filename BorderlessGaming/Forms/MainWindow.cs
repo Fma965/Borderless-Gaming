@@ -355,7 +355,13 @@ namespace BorderlessGaming.Forms
             var favorite = new Favorite
             {
                 Type = FavoriteType.Title,
-                SearchText = pd.WindowTitle
+                SearchText = pd.WindowTitle,
+                PositionH = 1392,
+                PositionW = 2475,
+                PositionX = 1322,
+                PositionY = 0,
+                Size = FavoriteSize.SpecificSize,
+                ShouldMaximize = false
             };
             Config.Instance.AddFavorite(favorite, () =>
             {
@@ -380,11 +386,17 @@ namespace BorderlessGaming.Forms
             {
                 return;
             }
-          var favorite = new Favorite
-          {
-              Type = FavoriteType.Process,
-              SearchText = pd.BinaryName
-          };
+            var favorite = new Favorite
+            {
+                Type = FavoriteType.Process,
+                SearchText = pd.BinaryName,
+                PositionH = 1392,
+                PositionW = 2475,
+                PositionX = 1322,
+                PositionY = 0,
+                Size = FavoriteSize.SpecificSize,
+                ShouldMaximize = false
+            };
             Config.Instance.AddFavorite(favorite, () =>
             {
                 lstFavorites.Items.Add(favorite);
@@ -414,8 +426,15 @@ namespace BorderlessGaming.Forms
                 var favorite = new Favorite
                 {
                     Type = FavoriteType.Regex,
-                    SearchText = res
+                    SearchText = res,
+                    PositionH = 1392,
+                    PositionW = 2475,
+                    PositionX = 1322,
+                    PositionY = 0,
+                    Size = FavoriteSize.SpecificSize,
+                    ShouldMaximize = false,
                 };
+                
                 Config.Instance.AddFavorite(favorite, () =>
                 {
                     lstFavorites.Items.Add(favorite);
@@ -898,7 +917,7 @@ fav.PositionX.ToString()), out int favPositionX);
         private void MainWindow_Load(object sender, EventArgs e)
         {
             // set the title
-            Text = "Borderless Gaming " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + ((Uac.Elevated) ? " [Administrator]" : "");
+            Text = "Borderless Gaming " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + " (Modded by Fma965)" + ((Uac.Elevated) ? " [Administrator]" : "");
 
             var settings = Config.Instance.AppSettings;
             // load up settings
