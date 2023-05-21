@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BorderlessGaming.Logic.Models;
 using BorderlessGaming.Logic.Properties;
 using BorderlessGaming.Logic.Steam;
 using BorderlessGaming.Logic.System.Utilities;
+using Microsoft.Win32;
 
 namespace BorderlessGaming.Logic.Windows
 {
@@ -419,6 +421,9 @@ namespace BorderlessGaming.Logic.Windows
             pd.MadeBorderlessAttempts = 0;
         }
 
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = false)]
+        static extern bool SendNotifyMessage(IntPtr hWnd, uint Msg, IntPtr wParam, string lParam);
+
         public static void ToggleWindowsTaskbarVisibility(Boolstate forced = Boolstate.Indeterminate)
         {
             try
@@ -472,6 +477,8 @@ namespace BorderlessGaming.Logic.Windows
                 // Keep track of the taskbar state so we don't let the user accidentally close Borderless Gaming
                 WindowsTaskbarIsHidden = !wantToMakeWindowsTaskbarVisible;
 
+                RegistryKey MMTaskbarEnabled = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced", true);
+
                 if (wantToMakeWindowsTaskbarVisible)
                 {
                     // If we're showing the taskbar, let's restore the original screen desktop work areas...
@@ -487,6 +494,8 @@ namespace BorderlessGaming.Logic.Windows
                     // taskbar was hidden.  Simulating mouse movement over the system tray seems to be the best way to get this
                     // done.
                     RedrawWindowsSystemTrayArea();
+
+                    MMTaskbarEnabled.SetValue("MMTaskbarEnabled", 0, RegistryValueKind.DWord);
                 }
                 else
                 {
@@ -504,8 +513,16 @@ namespace BorderlessGaming.Logic.Windows
                         // Note: WinAPI SystemParametersInfo() will automatically determine which screen by the rectangle we pass in.
                         //       (it's not possible to specify which screen we're referring to directly)
                     }
+
+                    MMTaskbarEnabled.SetValue("MMTaskbarEnabled", 1, RegistryValueKind.DWord);
                 }
-            }
+        
+                MMTaskbarEnabled.Close();
+
+                const int HWND_BROADCAST = 0xffff;
+                const int WM_SETTINGCHANGE = 0x001a; 
+                SendNotifyMessage((IntPtr)HWND_BROADCAST, WM_SETTINGCHANGE, IntPtr.Zero, "TraySettings");
+    }
             catch
             {
             }

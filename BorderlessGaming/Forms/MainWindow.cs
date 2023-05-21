@@ -12,6 +12,7 @@ using BorderlessGaming.Logic.Steam;
 using BorderlessGaming.Logic.System;
 using BorderlessGaming.Logic.Windows;
 using BorderlessGaming.Properties;
+using Microsoft.Win32;
 
 namespace BorderlessGaming.Forms
 {
@@ -356,12 +357,13 @@ namespace BorderlessGaming.Forms
             {
                 Type = FavoriteType.Title,
                 SearchText = pd.WindowTitle,
-                PositionH = 1392,
-                PositionW = 2475,
-                PositionX = 1322,
+                PositionH = 1440,
+                PositionW = 2560,
+                PositionX = 1280,
                 PositionY = 0,
                 Size = FavoriteSize.SpecificSize,
-                ShouldMaximize = false
+                ShouldMaximize = false,
+                HideWindowsTaskbar = true,
             };
             Config.Instance.AddFavorite(favorite, () =>
             {
@@ -390,12 +392,13 @@ namespace BorderlessGaming.Forms
             {
                 Type = FavoriteType.Process,
                 SearchText = pd.BinaryName,
-                PositionH = 1392,
-                PositionW = 2475,
-                PositionX = 1322,
+                PositionH = 1440,
+                PositionW = 2560,
+                PositionX = 1280,
                 PositionY = 0,
                 Size = FavoriteSize.SpecificSize,
-                ShouldMaximize = false
+                ShouldMaximize = false,
+                HideWindowsTaskbar = true,
             };
             Config.Instance.AddFavorite(favorite, () =>
             {
@@ -427,12 +430,13 @@ namespace BorderlessGaming.Forms
                 {
                     Type = FavoriteType.Regex,
                     SearchText = res,
-                    PositionH = 1392,
-                    PositionW = 2475,
-                    PositionX = 1322,
+                    PositionH = 1440,
+                    PositionW = 2560,
+                    PositionX = 1280,
                     PositionY = 0,
                     Size = FavoriteSize.SpecificSize,
                     ShouldMaximize = false,
+                    HideWindowsTaskbar = true,
                 };
                 
                 Config.Instance.AddFavorite(favorite, () =>
@@ -907,6 +911,7 @@ fav.PositionX.ToString()), out int favPositionX);
 
                 contextBorderlessOn.DropDownItems.Add(superSizeItem);
             }
+
         }
 
         private ToolStripMenuItem _toolStripDisableSteamIntegration;
