@@ -336,111 +336,6 @@ namespace BorderlessGaming.Forms
             Manipulation.RestoreWindow(pd);
         }
 
-        /// <summary>
-        ///     adds the currently selected process to the favorites (by window title text)
-        /// </summary>
-        private void byTheWindowTitleTextToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstProcesses.SelectedItem == null)
-            {
-                return;
-            }
-
-            var pd = (ProcessDetails) lstProcesses.SelectedItem;
-
-            if (!pd.Manageable)
-            {
-                return;
-            }
-            var favorite = new Favorite
-            {
-                Type = FavoriteType.Title,
-                SearchText = pd.WindowTitle,
-                PositionH = 1392,
-                PositionW = 2475,
-                PositionX = 1322,
-                PositionY = 0,
-                Size = FavoriteSize.SpecificSize,
-                ShouldMaximize = false
-            };
-            Config.Instance.AddFavorite(favorite, () =>
-            {
-                lstFavorites.Items.Add(favorite);
-            });
-
-        }
-
-        /// <summary>
-        ///     adds the currently selected process to the favorites (by process binary name)
-        /// </summary>
-        private void byTheProcessBinaryNameToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstProcesses.SelectedItem == null)
-            {
-                return;
-            }
-
-            var pd = (ProcessDetails) lstProcesses.SelectedItem;
-
-            if (!pd.Manageable)
-            {
-                return;
-            }
-            var favorite = new Favorite
-            {
-                Type = FavoriteType.Process,
-                SearchText = pd.BinaryName,
-                PositionH = 1392,
-                PositionW = 2475,
-                PositionX = 1322,
-                PositionY = 0,
-                Size = FavoriteSize.SpecificSize,
-                ShouldMaximize = false
-            };
-            Config.Instance.AddFavorite(favorite, () =>
-            {
-                lstFavorites.Items.Add(favorite);
-            });
-        }
-
-        /// <summary>
-        ///     adds the currently selected process to the favorites (by window title text)
-        /// </summary>
-        private void byTheWindowTitleTextregexToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstProcesses.SelectedItem == null)
-            {
-                return;
-            }
-
-            var pd = (ProcessDetails) lstProcesses.SelectedItem;
-
-            if (!pd.Manageable)
-            {
-                return;
-            }
-            var res = InputText("Add to favorites by RegEx string",
-                "Regex string (see the Help menu for reference)", pd.WindowTitle);
-            if (!string.IsNullOrWhiteSpace(res.Trim()))
-            {
-                var favorite = new Favorite
-                {
-                    Type = FavoriteType.Regex,
-                    SearchText = res,
-                    PositionH = 1392,
-                    PositionW = 2475,
-                    PositionX = 1322,
-                    PositionY = 0,
-                    Size = FavoriteSize.SpecificSize,
-                    ShouldMaximize = false,
-                };
-                
-                Config.Instance.AddFavorite(favorite, () =>
-                {
-                    lstFavorites.Items.Add(favorite);
-                });
-            }
-        }
         private string InputText(string sTitle, string sInstructions, string sDefaultValue = "")
         {
             try
@@ -482,11 +377,11 @@ namespace BorderlessGaming.Forms
 
             if (!string.IsNullOrEmpty(pd.WindowTitle))
             {
-                byTheWindowTitleTextToolStripMenuItem_Click(sender, e);
+                addFavorite(sender, FavoriteType.Title);
             }
             else
             {
-                byTheProcessBinaryNameToolStripMenuItem_Click(sender, e);
+                addFavorite(sender, FavoriteType.Process);
             }
         }
 
@@ -917,7 +812,7 @@ fav.PositionX.ToString()), out int favPositionX);
         private void MainWindow_Load(object sender, EventArgs e)
         {
             // set the title
-            Text = "Borderless Gaming " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + " (Modded by Fma965)" + ((Uac.Elevated) ? " [Administrator]" : "");
+            Text = "Borderless Gaming (32:9 Mod) " + Assembly.GetExecutingAssembly().GetName().Version.ToString(3) + ((Uac.Elevated) ? " [Administrator]" : "");
 
             var settings = Config.Instance.AppSettings;
             // load up settings
@@ -1248,6 +1143,100 @@ fav.PositionX.ToString()), out int favPositionX);
         private void checkOutRainwayToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Tools.GotoSite("https://rainway.io/?ref=borderlessgaming3");
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="positionH"></param>
+        /// <param name="positionW"></param>
+        /// <param name="positionX"></param>
+        /// <param name="positionY"></param>
+        private void addFavorite(object sender, FavoriteType type = FavoriteType.Title, int positionH = 1392, int positionW = 2475, int positionX = 1322, int positionY = 0 )
+        {
+            if (lstProcesses.SelectedItem == null)
+            {
+                return;
+            }
+
+            var pd = (ProcessDetails)lstProcesses.SelectedItem;
+
+            if (!pd.Manageable)
+            {
+                return;
+            }
+
+            string searchText = "";
+
+            ToolStripMenuItem menuItem = sender as ToolStripMenuItem;
+            if (menuItem != null)
+            {
+                switch (menuItem?.OwnerItem.Name)
+                {
+                    case "toolStripByTheWindowTitle":
+                        type = FavoriteType.Title;
+                        break;
+                    case "toolStripByRegex":
+                        type = FavoriteType.Regex;
+                        break;
+                    case "toolStripByProcess":
+                        type = FavoriteType.Process;
+                        break;
+                }
+            }
+
+            switch (type)
+            {
+                case FavoriteType.Process:
+                    searchText = pd.BinaryName;
+                    break;
+                case FavoriteType.Title:
+                    searchText = pd.WindowTitle;
+                    break;
+                case FavoriteType.Regex:
+                    var res = InputText("Add to favorites by RegEx string", "Regex string (see the Help menu for reference)", pd.WindowTitle);
+                    if (!string.IsNullOrWhiteSpace(res.Trim())) searchText = res;
+                    break;
+            } 
+            
+            var favorite = new Favorite
+            {
+                Type = type,
+                SearchText = searchText,
+                PositionH = positionH,
+                PositionW = positionW,
+                PositionX = positionX,
+                PositionY = positionY,
+                Size = FavoriteSize.SpecificSize,
+                ShouldMaximize = false
+            };
+
+            Config.Instance.AddFavorite(favorite, () =>
+            {
+                lstFavorites.Items.Add(favorite);
+            });
+
+        }
+
+        private void toolStrip169CenterTitle_Click(object sender, EventArgs e)
+        {
+            addFavorite(sender);
+        }
+
+        private void toolStrip169LeftTitle_Click(object sender, EventArgs e)
+        {
+            addFavorite(sender, positionX:0, positionY:0);
+        }
+
+        private void toolStrip169RightTitle_Click(object sender, EventArgs e)
+        {
+            addFavorite(sender, positionX: 2645, positionY: 0);
+        }
+
+        private void toolStrip219Title_Click(object sender, EventArgs e)
+        {
+            addFavorite(sender, positionW: 3248, positionX: 936);
         }
     }
 }
